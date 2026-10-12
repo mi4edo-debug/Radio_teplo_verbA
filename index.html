@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RADIO TEPLO — Верба</title>
+<meta name="description" content="Новый сингл «Верба» от группы RADIO TEPLO. Слушай на всех платформах.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --silver: #e0e0e0;
+    --silver-dim: #a0a0a0;
+    --dark: #0a0a0c;
+    --dark-2: #121216;
+    --text: #f0f0f5;
+    --muted: #8888a0;
+    --accent: #c0c0ff;
+    --glow: rgba(192, 192, 255, 0.4);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+    position: relative;
+    background:
+      radial-gradient(circle at 30% 40%, rgba(192,192,255,0.08), transparent 60%),
+      radial-gradient(circle at 70% 60%, rgba(255,255,255,0.05), transparent 50%),
+      var(--dark);
+    overflow: hidden;
+  }
+
+  /* Звёздный шум / блики */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1px 1px at 30% 70%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 70% 90%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.5), transparent);
+    background-size: 200px 200px;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 8px 18px;
+    border: 1px solid rgba(192,192,255,0.3);
+    border-radius: 100px;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+    margin-bottom: 30px;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .artist {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(14px, 2vw, 18px);
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    animation: fadeUp 0.8s ease 0.1s both;
+  }
+
+  h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(48px, 12vw, 140px);
+    font-weight: 900;
+    line-height: 0.95;
+    background: linear-gradient(135deg, #ffffff, #c0c0ff 50%, #8888a0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 30px;
+    animation: fadeUp 0.8s ease 0.2s both;
+    position: relative;
+    z-index: 2;
+  }
+
+  .tagline {
+    font-size: clamp(15px, 2vw, 19px);
+    color: var(--muted);
+    max-width: 520px;
+    margin-bottom: 45px;
+    font-weight: 300;
+    animation: fadeUp 0.8s ease 0.3s both;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ---------- ДИСКО-ШАР ---------- */
+  .disco-wrapper {
+    position: relative;
+    margin-bottom: 40px;
+    animation: fadeUp 0.8s ease 0.25s both;
+    z-index: 2;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .disco-ball {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffffff, #c0c0c0 30%, #808080 60%, #404040);
+    box-shadow:
+      0 0 60px rgba(192,192,255,0.3),
+      0 0 120px rgba(192,192,255,0.1),
+      inset -10px -10px 20px rgba(0,0,0,0.5),
+      inset 10px 10px 20px rgba(255,255,255,0.3);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: rotateBall 8s linear infinite;
+  }
+
+  .disco-ball::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-conic-gradient(from 0deg, rgba(255,255,255,0.15) 0deg 10deg, transparent 10deg 20deg),
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 2px, transparent 2px, transparent 6px);
+    border-radius: 50%;
+    mix-blend-mode: overlay;
+  }
+
+  .disco-ball:hover {
+    transform: scale(1.08);
+    box-shadow:
+      0 0 80px rgba(192,192,255,0.5),
+      0 0 160px rgba(192,192,255,0.2);
+  }
+
+  .disco-ball:active {
+    transform: scale(0.95);
+  }
+
+  .disco-hint {
+    margin-top: 15px;
+    font-size: 13px;
+    color: var(--silver-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes rotateBall {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section {
+    padding: 100px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .section-sub {
+    text-align: center;
+    color: var(--muted);
+    max-width: 600px;
+    margin: 0 auto 60px;
+    font-weight: 300;
+  }
+
+  /* ---------- PLAYER / LINKS ---------- */
+  .player-wrap {
+    background: var(--dark-2);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 24px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .cover {
+    width: 100%;
+    max-width: 340px;
+    aspect-ratio: 1;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #2a2a30, #1a1a20, #0a0a0c);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 20px 60px rgba(192,192,255,0.15);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(45deg, rgba(192,192,255,0.03) 0 10px, transparent 10px 20px);
+  }
+
+  .cover-text {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.9);
+    text-align: center;
+    line-height: 1;
+    z-index: 1;
+    padding: 20px;
+    text-shadow: 0 0 30px rgba(192,192,255,0.3);
+  }
+
+  .cover-text small {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 4px;
+    margin-top: 12px;
+    opacity: 0.7;
+    color: var(--silver-dim);
+  }
+
+  .stream-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .stream-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 100px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.3s ease;
+  }
+
+  .stream-link:hover {
+    background: rgba(192,192,255,0.1);
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+  }
+
+  .about-text p {
+    color: var(--muted);
+    margin-bottom: 18px;
+    font-weight: 300;
+  }
+
+  .about-text p strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .stat {
+    background: var(--dark-2);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 18px;
+    padding: 28px 20px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    padding: 60px 20px 40px;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .socials {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+
+  .socials a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+  }
+
+  .socials a:hover { color: var(--accent); }
+
+  footer .copy {
+    color: var(--muted);
+    font-size: 12px;
+    opacity: 0.6;
+  }
+
+  /* ---------- ANIMATIONS ---------- */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 768px) {
+    .about-grid { grid-template-columns: 1fr; gap: 30px; }
+    section { padding: 70px 20px; }
+    .player-wrap { padding: 25px; }
+    .stats { grid-template-columns: 1fr 1fr; }
+    .disco-ball { width: 120px; height: 120px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <span class="badge">Новый сингл · 2026</span>
+  <p class="artist">RADIO TEPLO</p>
+  <h1>Верба</h1>
+  <p class="tagline">Ветка, которая расцвела диско-шарами. Песня о том, как весна приходит даже в самые тёмные времена.</p>
+
+  <!-- Диско-шар -->
+  <div class="disco-wrapper" id="discoBall">
+    <div class="disco-ball"></div>
+    <p class="disco-hint">Нажми на шар — играет припев</p>
+  </div>
+
+  <!-- Аудио для припева -->
+  <audio id="chorusAudio" src="verba_chorus.mp3" preload="auto"></audio>
+
+  <div class="cta-group">
+    <a href="#" class="btn btn-primary" target="_blank">
+      ▶ Слушать полностью
+    </a>
+    <a href="#about" class="btn btn-ghost">О песне</a>
+  </div>
+</header>
+
+<!-- PLAYER / LINKS -->
+<section>
+  <h2 class="section-title reveal">Слушай везде</h2>
+  <p class="section-sub reveal">Выбирай удобную платформу — трек уже доступен на всех стримингах.</p>
+
+  <div class="player-wrap reveal">
+    <div class="cover">
+      <div class="cover-text">
+        ВЕРБА
+        <small>RADIO TEPLO · 2026</small>
+      </div>
+    </div>
+    <div class="stream-links">
+      <a href="#" class="stream-link" target="_blank">🎧 Все платформы</a>
+      <a href="#" class="stream-link" target="_blank">Apple Music</a>
+      <a href="#" class="stream-link" target="_blank">Яндекс Музыка</a>
+      <a href="#" class="stream-link" target="_blank">VK Музыка</a>
+      <a href="#" class="stream-link" target="_blank">Spotify</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <h2 class="section-title reveal">О песне</h2>
+  <p class="section-sub reveal">«Верба» — это символ весны, которая пробивается сквозь асфальт. И диско-шар, который превращает обычную ветку в праздник.</p>
+
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p><strong>RADIO TEPLO</strong> — группа из Санкт-Петербурга. Мы пишем песни о городах, людях и чувствах, которые сложно объяснить словами.</p>
+      <p>«Верба» — трек о том, как даже простая ветка может стать диско-шаром, если посмотреть на неё под правильным углом. Мы соединили нежность весеннего пробуждения и энергию танцпола.</p>
+      <p>Нажми на диско-шар выше — и услышишь припев. А полная версия уже на всех платформах.</p>
+    </div>
+    <div class="stats reveal">
+      <div class="stat">
+        <span class="stat-num">1</span>
+        <span class="stat-label">Ветка</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">∞</span>
+        <span class="stat-label">Бликов</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">2026</span>
+        <span class="stat-label">Релиз</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">💿</span>
+        <span class="stat-label">Сингл</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="socials">
+    <a href="#" target="_blank">Instagram</a>
+    <a href="#" target="_blank">VK</a>
+    <a href="#" target="_blank">Telegram</a>
+    <a href="#" target="_blank">YouTube</a>
+    <a href="#" target="_blank">TikTok</a>
+  </div>
+  <p class="copy">© 2026 RADIO TEPLO. Все права защищены.</p>
+</footer>
+
+<script>
+  // Плавное появление блоков при скролле
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Клик по диско-шару — воспроизведение припева
+  const discoBall = document.getElementById('discoBall');
+  const chorus = document.getElementById('chorusAudio');
+
+  discoBall.addEventListener('click', () => {
+    // Сброс и воспроизведение
+    chorus.currentTime = 0;
+    chorus.play().catch(err => {
+      console.log('Не удалось воспроизвести аудио:', err);
+    });
+
+    // Визуальный отклик
+    discoBall.style.transform = 'scale(0.9)';
+    setTimeout(() => {
+      discoBall.style.transform = '';
+    }, 150);
+  });
+
+  // Если аудио закончилось — сбросить
+  chorus.addEventListener('ended', () => {
+    chorus.currentTime = 0;
+  });
+</script>
+
+</body>
+</html>
