@@ -19,7 +19,6 @@
     --text: #f0f0f5;
     --muted: #8888a0;
     --accent: #c0c0ff;
-    --glow: rgba(192, 192, 255, 0.4);
   }
 
   html { scroll-behavior: smooth; }
@@ -113,94 +112,44 @@
     z-index: 2;
   }
 
-  /* ---------- ДИСКО-ШАР ---------- */
+  /* ---------- 3D ДИСКО-ШАР ---------- */
   .disco-wrapper {
     position: relative;
     margin-bottom: 25px;
     animation: fadeUp 0.8s ease 0.25s both;
     z-index: 2;
-    cursor: pointer;
     user-select: none;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  .disco-ball {
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    position: relative;
-    overflow: hidden;
-    background: #1a1a20;
-    box-shadow:
-      0 0 80px rgba(192,192,255,0.35),
-      0 0 160px rgba(192,192,255,0.15),
-      inset 0 0 40px rgba(0,0,0,0.6);
-    transition: transform 0.35s cubic-bezier(.34,1.56,.64,1), box-shadow 0.35s ease;
+  #discoCanvas {
+    width: 260px;
+    height: 260px;
+    cursor: grab;
+    display: block;
+    filter: drop-shadow(0 0 60px rgba(192,192,255,0.4));
+    transition: filter 0.4s ease;
   }
 
-  .disco-ball::before {
-    content: '';
-    position: absolute;
-    inset: -20%;
-    background-image:
-      linear-gradient(45deg, rgba(255,255,255,0.9) 0%, rgba(200,200,255,0.5) 20%, rgba(80,80,120,0.9) 40%, rgba(255,255,255,0.7) 55%, rgba(120,120,180,0.6) 75%, rgba(255,255,255,0.85) 100%),
-      repeating-linear-gradient(0deg, rgba(0,0,0,0.55) 0px, rgba(0,0,0,0.55) 1px, transparent 1px, transparent 14px),
-      repeating-linear-gradient(90deg, rgba(0,0,0,0.55) 0px, rgba(0,0,0,0.55) 1px, transparent 1px, transparent 14px);
-    background-size: 100% 100%, 14px 14px, 14px 14px;
-    border-radius: 50%;
-    animation: shimmer 6s ease-in-out infinite;
-    filter: contrast(1.15) saturate(0.9);
+  #discoCanvas:active {
+    cursor: grabbing;
   }
 
-  .disco-ball::after {
-    content: '';
-    position: absolute;
-    top: 8%;
-    left: 18%;
-    width: 55%;
-    height: 45%;
-    border-radius: 50%;
-    background: radial-gradient(ellipse at center, rgba(255,255,255,0.95), rgba(255,255,255,0) 70%);
-    pointer-events: none;
-    filter: blur(2px);
-  }
-
-  .disco-ball:hover {
-    transform: scale(1.06) rotate(5deg);
-    box-shadow:
-      0 0 120px rgba(192,192,255,0.6),
-      0 0 200px rgba(192,192,255,0.25),
-      inset 0 0 40px rgba(0,0,0,0.6);
-  }
-
-  .disco-ball:active {
-    transform: scale(0.93);
-  }
-
-  .disco-ball.playing {
-    animation: pulseGlow 1s ease-in-out infinite;
-  }
-
-  @keyframes shimmer {
-    0%, 100% { filter: contrast(1.15) saturate(0.9) hue-rotate(0deg); }
-    50% { filter: contrast(1.3) saturate(1.1) hue-rotate(15deg); }
-  }
-
-  @keyframes pulseGlow {
-    0%, 100% { box-shadow: 0 0 80px rgba(192,192,255,0.35), 0 0 160px rgba(192,192,255,0.15), inset 0 0 40px rgba(0,0,0,0.6); }
-    50% { box-shadow: 0 0 140px rgba(192,192,255,0.7), 0 0 260px rgba(192,192,255,0.35), inset 0 0 40px rgba(0,0,0,0.6); }
+  .disco-wrapper.playing #discoCanvas {
+    filter: drop-shadow(0 0 100px rgba(192,192,255,0.75)) drop-shadow(0 0 40px rgba(255,255,255,0.4));
   }
 
   .disco-hint {
-    margin-top: 18px;
-    font-size: 13px;
+    margin-top: 8px;
+    font-size: 12px;
     color: var(--silver-dim);
     letter-spacing: 2px;
     text-transform: uppercase;
     animation: pulse 2s ease-in-out infinite;
     text-align: center;
+    transition: color 0.3s ease;
   }
 
   @keyframes pulse {
@@ -469,7 +418,7 @@
     section { padding: 70px 20px; }
     .player-wrap { padding: 25px; }
     .stats { grid-template-columns: 1fr 1fr; }
-    .disco-ball { width: 140px; height: 140px; }
+    #discoCanvas { width: 200px; height: 200px; }
   }
 </style>
 </head>
@@ -482,9 +431,9 @@
   <h1>Верба</h1>
   <p class="tagline">Ветка, которая расцвела диско-шарами. Песня о том, как весна приходит даже в самые тёмные времена.</p>
 
-  <div class="disco-wrapper" id="discoBall">
-    <div class="disco-ball" id="ball"></div>
-    <p class="disco-hint" id="hint">Нажми на шар — играет припев</p>
+  <div class="disco-wrapper" id="discoWrapper">
+    <canvas id="discoCanvas"></canvas>
+    <p class="disco-hint" id="hint">Крути шар · нажми — играет припев</p>
   </div>
 
   <audio id="chorusAudio" preload="auto">
@@ -529,7 +478,7 @@
     <div class="about-text reveal">
       <p><strong>RADIO TEPLO</strong> — группа из Санкт-Петербурга. Мы пишем песни о городах, людях и чувствах, которые сложно объяснить словами.</p>
       <p>«Верба» — трек о том, как даже простая ветка может стать диско-шаром, если посмотреть на неё под правильным углом. Мы соединили нежность весеннего пробуждения и энергию танцпола.</p>
-      <p>Нажми на диско-шар выше — и услышишь припев. А полная версия уже на всех платформах.</p>
+      <p>Покрути диско-шар выше — а короткое нажатие включит припев. Полная версия уже на всех платформах.</p>
     </div>
     <div class="stats reveal">
       <div class="stat">
@@ -564,20 +513,278 @@
   <p class="copy">© 2026 RADIO TEPLO. Все права защищены.</p>
 </footer>
 
-<script>
-  // Появление блоков при скролле
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
-    });
-  }, { threshold: 0.15 });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+<!-- Three.js для 3D-шара -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+  }
+}
+</script>
 
-  // Плеер припева
-  const discoBall = document.getElementById('discoBall');
-  const ball = document.getElementById('ball');
-  const hint = document.getElementById('hint');
+<script type="module">
+import * as THREE from 'three';
+
+  /* ========== 1. ПРОЦЕДУРНАЯ ТЕКСТУРА ДИСКО-ШАРА ========== */
+  function createDiscoTexture() {
+    const size = 2048;
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+
+    // Тёмная основа между плитками
+    ctx.fillStyle = '#0a0a0f';
+    ctx.fillRect(0, 0, size, size);
+
+    const tiles = 72; // количество плиток по ширине
+    const tileSize = size / tiles;
+
+    for (let y = 0; y < tiles; y++) {
+      for (let x = 0; x < tiles; x++) {
+        const r = Math.random();
+        let color;
+
+        if (r < 0.05) {
+          // Яркий белый блик
+          color = `rgba(255,255,255,${0.95})`;
+        } else if (r < 0.15) {
+          // Голубоватый блик
+          const b = 200 + Math.random() * 55;
+          color = `rgba(${180 + Math.random()*40}, ${190 + Math.random()*40}, ${b}, 0.9)`;
+        } else if (r < 0.45) {
+          // Светлое серебро
+          const v = 160 + Math.random() * 70;
+          color = `rgba(${v}, ${v}, ${v + 10}, 0.95)`;
+        } else if (r < 0.75) {
+          // Среднее серебро
+          const v = 90 + Math.random() * 60;
+          color = `rgba(${v}, ${v}, ${v + 8}, 0.95)`;
+        } else {
+          // Тёмное серебро
+          const v = 30 + Math.random() * 50;
+          color = `rgba(${v}, ${v}, ${v + 6}, 0.95)`;
+        }
+
+        ctx.fillStyle = color;
+        ctx.fillRect(
+          x * tileSize + 0.8,
+          y * tileSize + 0.8,
+          tileSize - 1.6,
+          tileSize - 1.6
+        );
+      }
+    }
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    return tex;
+  }
+
+  /* ========== 2. ОКРУЖЕНИЕ (для реалистичных отражений) ========== */
+  function createEnvTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1024;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+
+    const grad = ctx.createLinearGradient(0, 0, 0, 512);
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(0.4, '#c0c0ff');
+    grad.addColorStop(0.7, '#4a4a6a');
+    grad.addColorStop(1, '#0a0a12');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 1024, 512);
+
+    // Пятна-источники света на окружении
+    for (let i = 0; i < 12; i++) {
+      const x = Math.random() * 1024;
+      const y = Math.random() * 300;
+      const r = 40 + Math.random() * 80;
+      const rg = ctx.createRadialGradient(x, y, 0, x, y, r);
+      rg.addColorStop(0, 'rgba(255,255,255,0.9)');
+      rg.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = rg;
+      ctx.fillRect(x - r, y - r, r * 2, r * 2);
+    }
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.mapping = THREE.EquirectangularReflectionMapping;
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  }
+
+  /* ========== 3. СЦЕНА ========== */
+  const canvas = document.getElementById('discoCanvas');
+  const wrapper = document.getElementById('discoWrapper');
+
+  const renderer = new THREE.WebGLRenderer({
+    canvas: canvas,
+    antialias: true,
+    alpha: true
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.2;
+
+  const scene = new THREE.Scene();
+
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.set(0, 0, 4);
+
+  // Окружение для отражений
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const envMap = pmrem.fromEquirectangular(createEnvTexture()).texture;
+  scene.environment = envMap;
+
+  // Сфера
+  const geometry = new THREE.SphereGeometry(1, 96, 96);
+  const texture = createDiscoTexture();
+  const material = new THREE.MeshStandardMaterial({
+    map: texture,
+    metalness: 0.95,
+    roughness: 0.18,
+    envMapIntensity: 1.6
+  });
+  const sphere = new THREE.Mesh(geometry, material);
+  scene.add(sphere);
+
+  // Точечные источники света для «искр»
+  const light1 = new THREE.PointLight(0xffffff, 3, 12);
+  light1.position.set(3, 3, 4);
+  scene.add(light1);
+
+  const light2 = new THREE.PointLight(0xc0c0ff, 2, 12);
+  light2.position.set(-3, -2, 3);
+  scene.add(light2);
+
+  const light3 = new THREE.PointLight(0xffd0a0, 2, 12);
+  light3.position.set(2, -3, 2);
+  scene.add(light3);
+
+  const ambient = new THREE.AmbientLight(0xffffff, 0.35);
+  scene.add(ambient);
+
+  /* ========== 4. УПРАВЛЕНИЕ ВРАЩЕНИЕМ ========== */
+  let isDragging = false;
+  let prevX = 0, prevY = 0;
+  let totalMove = 0;
+  let dragStartTime = 0;
+  let autoRotate = true;
+  let velocityX = 0, velocityY = 0;
+
+  function getPoint(e) {
+    if (e.touches && e.touches.length) {
+      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+    return { x: e.clientX, y: e.clientY };
+  }
+
+  function onDown(e) {
+    isDragging = true;
+    autoRotate = false;
+    const p = getPoint(e);
+    prevX = p.x;
+    prevY = p.y;
+    totalMove = 0;
+    dragStartTime = Date.now();
+    velocityX = 0;
+    velocityY = 0;
+  }
+
+  function onMove(e) {
+    if (!isDragging) return;
+    e.preventDefault?.();
+    const p = getPoint(e);
+    const dx = p.x - prevX;
+    const dy = p.y - prevY;
+    prevX = p.x;
+    prevY = p.y;
+    totalMove += Math.abs(dx) + Math.abs(dy);
+
+    velocityY = dx * 0.008;
+    velocityX = dy * 0.008;
+
+    sphere.rotation.y += velocityY;
+    sphere.rotation.x += velocityX;
+  }
+
+  function onUp() {
+    if (!isDragging) return;
+    isDragging = false;
+
+    // Определяем, был ли это клик (короткое нажатие, без движения)
+    const dt = Date.now() - dragStartTime;
+    if (totalMove < 8 && dt < 350) {
+      toggleMusic();
+    }
+
+    // Возвращаем авто-вращение через 4 секунды
+    setTimeout(() => {
+      autoRotate = true;
+    }, 4000);
+  }
+
+  canvas.addEventListener('mousedown', onDown);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+
+  canvas.addEventListener('touchstart', onDown, { passive: true });
+  window.addEventListener('touchmove', onMove, { passive: false });
+  window.addEventListener('touchend', onUp);
+
+  /* ========== 5. ЦИКЛ ОТРИСОВКИ ========== */
+  const clock = new THREE.Clock();
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    const dt = clock.getDelta();
+
+    if (autoRotate) {
+      sphere.rotation.y += dt * 0.35;
+      sphere.rotation.x += dt * 0.1;
+    } else if (!isDragging) {
+      // Инерция после отпускания
+      sphere.rotation.y += velocityY;
+      sphere.rotation.x += velocityX;
+      velocityY *= 0.96;
+      velocityX *= 0.96;
+
+      if (Math.abs(velocityY) < 0.0001 && Math.abs(velocityX) < 0.0001) {
+        velocityY = 0;
+        velocityX = 0;
+      }
+    }
+
+    // Свет медленно летает вокруг — блики двигаются
+    const t = clock.getElapsedTime();
+    light1.position.x = Math.cos(t * 0.6) * 3.5;
+    light1.position.z = Math.sin(t * 0.6) * 3.5;
+    light2.position.x = Math.cos(t * 0.4 + 2) * 3.5;
+    light2.position.z = Math.sin(t * 0.4 + 2) * 3.5;
+
+    renderer.render(scene, camera);
+  }
+
+  /* ========== 6. АДАПТАЦИЯ РАЗМЕРА ========== */
+  function resize() {
+    const size = canvas.clientWidth;
+    renderer.setSize(size, size, false);
+    camera.aspect = 1;
+    camera.updateProjectionMatrix();
+  }
+
+  window.addEventListener('resize', resize);
+  setTimeout(resize, 50);
+  resize();
+
+  animate();
+
+  /* ========== 7. МУЗЫКА ========== */
   const chorus = document.getElementById('chorusAudio');
+  const hint = document.getElementById('hint');
   let isPlaying = false;
 
   chorus.addEventListener('error', () => {
@@ -585,42 +792,47 @@
     hint.style.color = '#ff6b6b';
   });
 
-  discoBall.addEventListener('click', () => {
+  function toggleMusic() {
     if (isPlaying) {
       chorus.pause();
       chorus.currentTime = 0;
-      ball.classList.remove('playing');
-      hint.textContent = 'Нажми на шар — играет припев';
+      wrapper.classList.remove('playing');
+      hint.textContent = 'Крути шар · нажми — играет припев';
       hint.style.color = '';
       isPlaying = false;
       return;
     }
 
     chorus.currentTime = 0;
-    const playPromise = chorus.play();
-
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          ball.classList.add('playing');
-          hint.textContent = '♪ Играет припев... (нажми, чтобы остановить)';
-          hint.style.color = '';
-          isPlaying = true;
-        })
-        .catch(err => {
-          console.error('Ошибка воспроизведения:', err);
-          hint.textContent = '⚠️ Не удалось воспроизвести. Проверь MP3.';
-          hint.style.color = '#ff6b6b';
-        });
+    const p = chorus.play();
+    if (p !== undefined) {
+      p.then(() => {
+        wrapper.classList.add('playing');
+        hint.textContent = '♪ Играет припев... (нажми, чтобы остановить)';
+        hint.style.color = '';
+        isPlaying = true;
+      }).catch(err => {
+        console.error(err);
+        hint.textContent = '⚠️ Не удалось воспроизвести';
+        hint.style.color = '#ff6b6b';
+      });
     }
-  });
+  }
 
   chorus.addEventListener('ended', () => {
-    ball.classList.remove('playing');
-    hint.textContent = 'Нажми на шар — играет припев';
+    wrapper.classList.remove('playing');
+    hint.textContent = 'Крути шар · нажми — играет припев';
     hint.style.color = '';
     isPlaying = false;
   });
+
+  /* ========== 8. ПОЯВЛЕНИЕ БЛОКОВ ПРИ СКРОЛЛЕ ========== */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
 
 </body>
