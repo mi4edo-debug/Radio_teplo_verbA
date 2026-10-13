@@ -66,7 +66,25 @@
     opacity: 0.5;
   }
 
-  /* Прожекторы — холодные + тёплые */
+  .flash-overlay {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,1), rgba(255,220,180,0.8) 30%, transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 900;
+  }
+
+  .flash-overlay.active {
+    opacity: 0.85;
+    animation: flashFade 1.4s ease-out forwards;
+  }
+
+  @keyframes flashFade {
+    0% { opacity: 0.85; }
+    100% { opacity: 0; }
+  }
+
   .spotlights {
     position: absolute;
     inset: 0;
@@ -169,7 +187,6 @@
     font-weight: 400;
   }
 
-  /* ---------- ЗОНА ШАРА + ВИНИЛА ---------- */
   .hero-interactive {
     position: relative;
     width: 100%;
@@ -237,13 +254,52 @@
       drop-shadow(0 0 60px rgba(255,180,100,0.45));
   }
 
-  /* Энергия — полоска под шаром */
+  .disco-wrapper.bursting #discoCanvas {
+    animation: ballShake 0.5s ease-in-out;
+    filter:
+      drop-shadow(0 0 180px rgba(255,255,255,1))
+      drop-shadow(0 0 120px rgba(255,220,150,1))
+      brightness(1.8) !important;
+  }
+
+  @keyframes ballShake {
+    0%, 100% { transform: translate(0, 0); }
+    15% { transform: translate(-6px, 4px); }
+    30% { transform: translate(5px, -6px); }
+    45% { transform: translate(-4px, -5px); }
+    60% { transform: translate(6px, 3px); }
+    75% { transform: translate(-3px, 5px); }
+  }
+
+  .shockwave {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    border: 3px solid rgba(255,220,180,0.9);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 8;
+    opacity: 0;
+  }
+
+  .shockwave.active {
+    animation: shockwaveExpand 1.2s cubic-bezier(0.15, 0.6, 0.4, 1) forwards;
+  }
+
+  @keyframes shockwaveExpand {
+    0% { width: 0; height: 0; opacity: 1; border-width: 8px; }
+    100% { width: 900px; height: 900px; opacity: 0; border-width: 1px; }
+  }
+
   .energy-wrap {
     position: absolute;
-    bottom: -12px;
+    bottom: -22px;
     left: 50%;
     transform: translateX(-50%);
-    width: 220px;
+    width: 260px;
     z-index: 6;
     opacity: 0;
     transition: opacity 0.4s ease;
@@ -254,20 +310,26 @@
 
   .energy-bar {
     width: 100%;
-    height: 4px;
-    border-radius: 4px;
+    height: 5px;
+    border-radius: 5px;
     background: rgba(255,255,255,0.08);
     overflow: hidden;
     box-shadow: 0 0 12px rgba(0,0,0,0.5);
+    position: relative;
   }
 
   .energy-fill {
     height: 100%;
     width: 0%;
-    border-radius: 4px;
+    border-radius: 5px;
     background: linear-gradient(90deg, var(--accent), var(--warm-soft), var(--warm-deep));
     box-shadow: 0 0 14px rgba(255,180,100,0.6);
-    transition: width 0.15s linear;
+    transition: width 0.08s linear;
+  }
+
+  .energy-wrap.full .energy-fill {
+    background: linear-gradient(90deg, #ffffff, #ffd7a0, #ff8c42);
+    box-shadow: 0 0 30px rgba(255,220,150,1), 0 0 60px rgba(255,180,100,0.8);
   }
 
   .energy-label {
@@ -277,11 +339,17 @@
     text-transform: uppercase;
     color: var(--warm-soft);
     text-align: center;
-    margin-top: 8px;
-    opacity: 0.7;
+    margin-top: 10px;
+    opacity: 0.75;
+    transition: color 0.3s ease, opacity 0.3s ease;
   }
 
-  /* Контейнер для точечных бликов */
+  .energy-wrap.full .energy-label {
+    color: #ffffff;
+    opacity: 1;
+    text-shadow: 0 0 12px rgba(255,220,150,1);
+  }
+
   .disco-dots {
     position: absolute;
     inset: -260px;
@@ -303,7 +371,6 @@
     filter: blur(0.4px);
   }
 
-  /* Взрыв частиц */
   .burst-layer {
     position: absolute;
     inset: 0;
@@ -323,20 +390,14 @@
     pointer-events: none;
     mix-blend-mode: screen;
     animation: burst 1.4s cubic-bezier(0.15, 0.6, 0.4, 1) forwards;
+    box-shadow: 0 0 12px rgba(255,220,180,1);
   }
 
   @keyframes burst {
-    0% {
-      transform: translate(-50%, -50%) scale(1);
-      opacity: 1;
-    }
-    100% {
-      transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2);
-      opacity: 0;
-    }
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.1); opacity: 0; }
   }
 
-  /* ---------- ВИНИЛ ---------- */
   .vinyl-wrapper {
     position: absolute;
     right: 0%;
@@ -351,10 +412,7 @@
     transition: opacity 0.35s ease, transform 0.35s ease;
   }
 
-  .vinyl-wrapper:hover {
-    opacity: 1;
-    transform: scale(1.1);
-  }
+  .vinyl-wrapper:hover { opacity: 1; transform: scale(1.1); }
 
   .vinyl {
     width: 96px;
@@ -413,26 +471,12 @@
     border-radius: 50%;
   }
 
-  .vinyl-title {
-    font-size: 7px;
-    font-weight: 900;
-    letter-spacing: 0.6px;
-    line-height: 1;
-    margin-bottom: 1px;
-  }
-
-  .vinyl-artist {
-    font-size: 4px;
-    letter-spacing: 1px;
-    opacity: 0.75;
-    font-weight: 700;
-  }
+  .vinyl-title { font-size: 7px; font-weight: 900; letter-spacing: 0.6px; line-height: 1; margin-bottom: 1px; }
+  .vinyl-artist { font-size: 4px; letter-spacing: 1px; opacity: 0.75; font-weight: 700; }
 
   .vinyl-wrapper.playing .vinyl {
     animation: spin 3s linear infinite;
-    box-shadow:
-      0 10px 30px rgba(0,0,0,0.7),
-      0 0 50px rgba(255,180,100,0.5);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 50px rgba(255,180,100,0.5);
   }
 
   .vinyl-wrapper.playing { opacity: 1; }
@@ -463,13 +507,54 @@
     50% { opacity: 1; transform: scale(1.12); }
   }
 
-  /* ---------- МОДАЛКА НАГРАДЫ ---------- */
+  /* Плавающая кнопка "Играть снова" */
+  .floating-restart {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 16px 28px;
+    border-radius: 100px;
+    background: linear-gradient(135deg, #ffd7a0, #ff8c42);
+    color: #1a0d00;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 10px 40px rgba(255,140,66,0.5), 0 0 60px rgba(255,180,100,0.3);
+    z-index: 800;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: floatRestart 3s ease-in-out infinite;
+  }
+
+  .floating-restart.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .floating-restart:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 15px 55px rgba(255,140,66,0.7), 0 0 80px rgba(255,180,100,0.5);
+  }
+
+  @keyframes floatRestart {
+    0%, 100% { box-shadow: 0 10px 40px rgba(255,140,66,0.5), 0 0 60px rgba(255,180,100,0.3); }
+    50% { box-shadow: 0 15px 50px rgba(255,140,66,0.7), 0 0 80px rgba(255,180,100,0.5); }
+  }
+
+  /* ---------- МОДАЛКА ---------- */
   .reward-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(5, 5, 10, 0.88);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    background: rgba(5, 5, 10, 0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -488,19 +573,19 @@
   .reward-card {
     background: linear-gradient(160deg, #16161c, #0c0c12 60%, #14100c);
     border: 1px solid rgba(255,180,100,0.25);
-    border-radius: 28px;
-    max-width: 560px;
+    border-radius: 32px;
+    max-width: 580px;
     width: 100%;
-    padding: 48px 40px;
+    padding: 52px 44px;
     text-align: center;
     position: relative;
     box-shadow:
       0 40px 120px rgba(0,0,0,0.7),
-      0 0 80px rgba(255,180,100,0.12),
+      0 0 100px rgba(255,180,100,0.15),
       inset 0 1px 0 rgba(255,255,255,0.05);
     transform: scale(0.92) translateY(20px);
     transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
-    max-height: 90vh;
+    max-height: 92vh;
     overflow-y: auto;
   }
 
@@ -524,10 +609,10 @@
 
   .reward-title {
     font-family: 'Unbounded', sans-serif;
-    font-size: clamp(26px, 4.5vw, 40px);
+    font-size: clamp(24px, 4.5vw, 38px);
     font-weight: 900;
     line-height: 1.05;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     background: linear-gradient(135deg, #ffffff, #ffd7a0 50%, #ff8c42);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -536,22 +621,69 @@
   }
 
   .reward-text {
-    color: var(--muted);
-    font-size: 15px;
-    font-weight: 300;
-    margin-bottom: 28px;
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 400;
+    margin-bottom: 20px;
     line-height: 1.7;
+    opacity: 0.9;
+  }
+
+  .reward-text .warm {
+    color: var(--warm-soft);
+    font-weight: 600;
+  }
+
+  /* Блок с временем */
+  .reward-time-block {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+
+  .reward-time-item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,180,100,0.15);
+    border-radius: 16px;
+    padding: 14px 22px;
+    min-width: 140px;
+  }
+
+  .reward-time-label {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .reward-time-value {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--warm-soft);
+    letter-spacing: -0.02em;
+    text-shadow: 0 0 20px rgba(255,180,100,0.5);
+  }
+
+  .reward-time-value.record {
+    color: #ffffff;
+    text-shadow: 0 0 30px rgba(255,220,150,1);
   }
 
   .reward-video {
     width: 100%;
-    border-radius: 16px;
+    border-radius: 18px;
     overflow: hidden;
-    margin-bottom: 28px;
+    margin-bottom: 18px;
     background: #000;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 40px rgba(255,180,100,0.15);
     aspect-ratio: 16 / 9;
     position: relative;
+    border: 1px solid rgba(255,180,100,0.15);
   }
 
   .reward-video iframe,
@@ -560,26 +692,18 @@
     height: 100%;
     border: 0;
     display: block;
+    object-fit: cover;
   }
 
-  .reward-video-placeholder {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #1a1a20, #0a0a0c);
-    color: var(--muted);
-    font-size: 13px;
-    padding: 20px;
-    text-align: center;
-    gap: 10px;
-  }
-
-  .reward-video-placeholder .icon {
-    font-size: 32px;
-    opacity: 0.5;
+  .reward-subtext {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--warm-soft);
+    margin-bottom: 28px;
+    opacity: 0.85;
+    line-height: 1.6;
   }
 
   .reward-actions {
@@ -644,6 +768,7 @@
     justify-content: center;
     transition: all 0.3s ease;
     line-height: 1;
+    z-index: 2;
   }
 
   .reward-close:hover {
@@ -651,7 +776,6 @@
     color: var(--text);
   }
 
-  /* ---------- SECTIONS ---------- */
   section {
     padding: 110px 20px;
     max-width: 1100px;
@@ -682,7 +806,6 @@
     line-height: 1.75;
   }
 
-  /* ---------- PLAYER / LINKS ---------- */
   .player-wrap {
     background: linear-gradient(180deg, var(--dark-2), #0e0e14);
     border: 1px solid rgba(255,255,255,0.07);
@@ -769,7 +892,6 @@
     transform: translateY(-2px);
   }
 
-  /* ---------- ABOUT ---------- */
   .about-grid {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
@@ -820,7 +942,6 @@
     font-size: 36px;
     font-weight: 900;
     letter-spacing: -0.02em;
-    color: var(--accent);
     display: block;
     margin-bottom: 8px;
     background: linear-gradient(135deg, var(--accent), var(--warm-soft));
@@ -836,7 +957,6 @@
     letter-spacing: 0.15em;
   }
 
-  /* ---------- FOOTER ---------- */
   footer {
     padding: 70px 20px 50px;
     text-align: center;
@@ -871,7 +991,6 @@
     letter-spacing: 0.05em;
   }
 
-  /* ---------- ANIMATIONS ---------- */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
@@ -937,7 +1056,6 @@
     z-index: 4;
   }
 
-  /* ---------- RESPONSIVE ---------- */
   @media (max-width: 768px) {
     .about-grid { grid-template-columns: 1fr; gap: 35px; }
     section { padding: 80px 20px; }
@@ -952,11 +1070,14 @@
     .vinyl-hint { font-size: 15px; }
     .spotlight { width: 220px; }
     .reward-card { padding: 36px 24px; }
-    .energy-wrap { width: 180px; }
+    .energy-wrap { width: 200px; bottom: -18px; }
+    .floating-restart { bottom: 20px; right: 20px; padding: 14px 22px; font-size: 10px; }
   }
 </style>
 </head>
 <body>
+
+<div class="flash-overlay" id="flashOverlay"></div>
 
 <!-- HERO -->
 <header class="hero">
@@ -979,6 +1100,7 @@
         <canvas id="discoCanvas"></canvas>
         <div class="disco-dots" id="discoDots"></div>
         <div class="burst-layer" id="burstLayer"></div>
+        <div class="shockwave" id="shockwave"></div>
 
         <div class="energy-wrap" id="energyWrap">
           <div class="energy-bar">
@@ -1011,7 +1133,10 @@
   </div>
 </header>
 
-<!-- PLAYER / LINKS -->
+<!-- Floating restart -->
+<button class="floating-restart" id="floatingRestart">↻ Играть снова</button>
+
+<!-- PLAYER -->
 <section>
   <h2 class="section-title reveal">Слушай везде</h2>
   <p class="section-sub reveal">Выбирай удобную платформу — трек уже доступен на всех стримингах.</p>
@@ -1067,7 +1192,6 @@
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="socials">
     <a href="https://www.instagram.com/radio_teplo/" target="_blank" rel="noopener">Instagram</a>
@@ -1079,29 +1203,31 @@
   <p class="copy">© 2026 RADIO TEPLO. Все права защищены.</p>
 </footer>
 
-<!-- МОДАЛКА НАГРАДЫ -->
+<!-- МОДАЛКА -->
 <div class="reward-overlay" id="rewardOverlay">
   <div class="reward-card">
     <button class="reward-close" id="rewardClose" aria-label="Закрыть">✕</button>
 
-    <span class="reward-badge">Ты разбил шар</span>
-    <h3 class="reward-title">Секретное приветствие</h3>
-    <p class="reward-text">Ты был настойчив — и получил доступ к эксклюзиву от RADIO TEPLO. Смотри видео и делись с друзьями.</p>
+    <span class="reward-badge">Танцпол взорван</span>
+    <h3 class="reward-title">Поздравляем!<br>Ты взорвал танцпол!</h3>
+    <p class="reward-text"><span class="warm">RADIO TEPLO</span> благодарит тебя лично</p>
 
-    <div class="reward-video" id="rewardVideo">
-      <!--
-        ВАРИАНТ 1: YouTube (если зальёшь как unlisted):
-        <iframe src="https://www.youtube.com/embed/ВИДЕО_ID?rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-
-        ВАРИАНТ 2: локальный файл в репозитории:
-        <video src="greeting.mp4" controls playsinline></video>
-      -->
-      <div class="reward-video-placeholder">
-        <div class="icon">🎁</div>
-        <div>Здесь будет видео-приветствие от группы</div>
-        <div style="font-size: 11px; opacity: 0.6;">Замени этот блок на &lt;video&gt; или &lt;iframe&gt; в коде</div>
+    <div class="reward-time-block">
+      <div class="reward-time-item">
+        <div class="reward-time-label">Твоё время</div>
+        <div class="reward-time-value" id="yourTime">—</div>
+      </div>
+      <div class="reward-time-item">
+        <div class="reward-time-label">Лучшее</div>
+        <div class="reward-time-value" id="bestTime">—</div>
       </div>
     </div>
+
+    <div class="reward-video">
+      <video id="rewardVideoEl" src="greeting.mp4" controls playsinline preload="metadata"></video>
+    </div>
+
+    <p class="reward-subtext">Отправляй друзьям<br>и танцуй вместе с нами</p>
 
     <div class="reward-actions">
       <button class="reward-btn reward-btn-primary" id="shareBtn">📤 Поделиться</button>
@@ -1122,7 +1248,71 @@
 <script type="module">
 import * as THREE from 'three';
 
-  /* ========== 1. ТЕКСТУРА ========== */
+  /* ========== АУДИО-КОНТЕКСТ ========== */
+  let audioCtx = null;
+
+  function getAudioCtx() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function playExplosionSound() {
+    try {
+      const ctx = getAudioCtx();
+      const now = ctx.currentTime;
+
+      // 1. Низкий гул (бум)
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.exponentialRampToValueAtTime(25, now + 0.9);
+      gain.gain.setValueAtTime(0.9, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.4);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 1.5);
+
+      // 2. Шумовой всплеск (взрыв)
+      const bufferSize = Math.floor(ctx.sampleRate * 0.7);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2.5);
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.5, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(1200, now);
+      filter.frequency.exponentialRampToValueAtTime(80, now + 0.8);
+      noise.connect(filter).connect(noiseGain).connect(ctx.destination);
+      noise.start(now);
+      noise.stop(now + 0.9);
+
+      // 3. Высокий треск (стекло/искры)
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'triangle';
+      osc2.frequency.setValueAtTime(2000, now);
+      osc2.frequency.exponentialRampToValueAtTime(200, now + 0.3);
+      gain2.gain.setValueAtTime(0.3, now);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+      osc2.connect(gain2).connect(ctx.destination);
+      osc2.start(now);
+      osc2.stop(now + 0.5);
+    } catch (e) {
+      console.log('Sound error:', e);
+    }
+  }
+
+  /* ========== ТЕКСТУРА ========== */
   function createDiscoTexture() {
     const size = 2048;
     const canvas = document.createElement('canvas');
@@ -1173,7 +1363,6 @@ import * as THREE from 'three';
     return tex;
   }
 
-  /* ========== 2. ОКРУЖЕНИЕ ========== */
   function createEnvTexture() {
     const canvas = document.createElement('canvas');
     canvas.width = 1024;
@@ -1218,14 +1407,17 @@ import * as THREE from 'three';
     return tex;
   }
 
-  /* ========== 3. СЦЕНА ========== */
+  /* ========== СЦЕНА ========== */
   const canvas = document.getElementById('discoCanvas');
   const wrapper = document.getElementById('discoWrapper');
   const dotsContainer = document.getElementById('discoDots');
   const burstLayer = document.getElementById('burstLayer');
+  const shockwave = document.getElementById('shockwave');
+  const flashOverlay = document.getElementById('flashOverlay');
   const energyWrap = document.getElementById('energyWrap');
   const energyFill = document.getElementById('energyFill');
   const energyLabel = document.getElementById('energyLabel');
+  const floatingRestart = document.getElementById('floatingRestart');
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -1264,7 +1456,7 @@ import * as THREE from 'three';
 
   scene.add(new THREE.AmbientLight(0xffffff, 0.35));
 
-  /* ========== 4. ТОЧЕЧНЫЕ БЛИКИ ========== */
+  /* ========== ТОЧКИ ========== */
   const COOL_COLORS = ['255,255,255', '220,220,255', '200,200,255', '180,200,255', '230,230,255'];
   const WARM_COLORS = ['255,230,180', '255,200,120', '255,180,100', '255,220,160'];
 
@@ -1301,60 +1493,126 @@ import * as THREE from 'three';
     });
   }
 
-  /* ========== 5. ЭНЕРГИЯ ИГРЫ ========== */
+  /* ========== ИГРОВОЕ СОСТОЯНИЕ ========== */
   let energy = 0;
   const MAX_ENERGY = 100;
+  const FILL_RATE = 0.0025;    // сложнее — медленный рост
+  const DECAY_RATE = 0.2;      // быстрее тает
   let isBroken = false;
   let energyVisible = false;
+  let isBursting = false;
+  let burstStartTime = 0;
+  let gameStartTime = 0;
+  let gameTime = 0;
+  let freeMode = false;        // свободное вращение после прохождения
+  let bestTime = null;
+
+  // Загружаем рекорд из localStorage
+  try {
+    const stored = localStorage.getItem('radioTeploBestTime');
+    if (stored) bestTime = parseFloat(stored);
+  } catch (e) {}
 
   function updateEnergyDisplay() {
     const pct = Math.min(100, (energy / MAX_ENERGY) * 100);
     energyFill.style.width = pct + '%';
 
-    if (pct < 25) energyLabel.textContent = 'Крути шар';
-    else if (pct < 50) energyLabel.textContent = 'Ещё немного';
-    else if (pct < 75) energyLabel.textContent = 'Почти готово';
+    if (pct < 20) energyLabel.textContent = 'Крути шар';
+    else if (pct < 40) energyLabel.textContent = 'Ещё немного';
+    else if (pct < 60) energyLabel.textContent = 'Не останавливайся';
+    else if (pct < 80) energyLabel.textContent = 'Почти готово';
     else if (pct < 100) energyLabel.textContent = 'Ещё чуть-чуть!';
     else energyLabel.textContent = 'Взрыв!';
+
+    if (pct >= 100) energyWrap.classList.add('full');
+    else energyWrap.classList.remove('full');
   }
 
   function showEnergy() {
     if (!energyVisible) {
       energyVisible = true;
       energyWrap.classList.add('visible');
+      gameStartTime = performance.now();
     }
+  }
+
+  function formatTime(sec) {
+    return sec.toFixed(2).replace('.', ',') + ' сек';
   }
 
   function triggerBurst() {
     if (isBroken) return;
     isBroken = true;
+    isBursting = true;
+    burstStartTime = performance.now();
+
+    // Фиксируем время
+    gameTime = (performance.now() - gameStartTime) / 1000;
+
+    // Рекорд
+    let isNewRecord = false;
+    if (bestTime === null || gameTime < bestTime) {
+      bestTime = gameTime;
+      isNewRecord = true;
+      try {
+        localStorage.setItem('radioTeploBestTime', bestTime);
+      } catch (e) {}
+    }
+
+    // Звук взрыва
+    playExplosionSound();
+
+    // Флэш
+    flashOverlay.classList.add('active');
+    setTimeout(() => flashOverlay.classList.remove('active'), 1500);
+
+    // Ударная волна
+    shockwave.classList.add('active');
+    setTimeout(() => shockwave.classList.remove('active'), 1300);
+
+    // Тряска
+    wrapper.classList.add('bursting');
+    setTimeout(() => wrapper.classList.remove('bursting'), 600);
 
     // Частицы
-    const burstCount = 60;
-    for (let i = 0; i < burstCount; i++) {
+    for (let i = 0; i < 80; i++) {
       const p = document.createElement('div');
       p.className = 'burst-particle';
       const angle = Math.random() * Math.PI * 2;
-      const distance = 150 + Math.random() * 350;
+      const distance = 200 + Math.random() * 450;
       const dx = Math.cos(angle) * distance;
       const dy = Math.sin(angle) * distance;
       p.style.setProperty('--dx', dx + 'px');
       p.style.setProperty('--dy', dy + 'px');
-      p.style.animationDelay = (Math.random() * 0.15) + 's';
-      const size = 6 + Math.random() * 10;
+      p.style.animationDelay = (Math.random() * 0.2) + 's';
+      const size = 6 + Math.random() * 14;
       p.style.width = size + 'px';
       p.style.height = size + 'px';
       burstLayer.appendChild(p);
-      setTimeout(() => p.remove(), 1800);
+      setTimeout(() => p.remove(), 1900);
     }
 
-    // Показываем модалку через 600 мс
+    // Вибрация
+    if (navigator.vibrate) navigator.vibrate([80, 40, 120, 40, 200]);
+
+    // Заполняем время
+    const yourTimeEl = document.getElementById('yourTime');
+    const bestTimeEl = document.getElementById('bestTime');
+    yourTimeEl.textContent = formatTime(gameTime);
+    bestTimeEl.textContent = formatTime(bestTime);
+    if (isNewRecord) {
+      yourTimeEl.classList.add('record');
+    } else {
+      yourTimeEl.classList.remove('record');
+    }
+
+    // Модалка через 1.4 сек
     setTimeout(() => {
       document.getElementById('rewardOverlay').classList.add('show');
-    }, 700);
+    }, 1400);
   }
 
-  /* ========== 6. УПРАВЛЕНИЕ ========== */
+  /* ========== УПРАВЛЕНИЕ ========== */
   let isDragging = false;
   let prevX = 0, prevY = 0;
   let autoRotate = true;
@@ -1375,11 +1633,12 @@ import * as THREE from 'three';
     velocityX = 0;
     velocityY = 0;
     if (autoTimer) clearTimeout(autoTimer);
-    showEnergy();
+    if (!freeMode) showEnergy();
   }
 
   function onMove(e) {
-    if (!isDragging || isBroken) return;
+    if (!isDragging) return;
+    if (isBroken && !freeMode) return;  // до закрытия модалки — не крутим
     e.preventDefault?.();
     const p = getPoint(e);
     const dx = p.x - prevX;
@@ -1393,13 +1652,16 @@ import * as THREE from 'three';
     sphere.rotation.y += velocityY;
     sphere.rotation.x += velocityX;
 
-    // Энергия растёт от движения
-    const movement = Math.abs(dx) + Math.abs(dy);
-    energy = Math.min(MAX_ENERGY, energy + movement * 0.08);
-    updateEnergyDisplay();
-
-    if (energy >= MAX_ENERGY) {
-      triggerBurst();
+    // Энергия только в режиме игры
+    if (!freeMode && !isBroken) {
+      const movement = Math.abs(dx) + Math.abs(dy);
+      if (movement > 1) {
+        energy = Math.min(MAX_ENERGY, energy + movement * FILL_RATE);
+        updateEnergyDisplay();
+      }
+      if (energy >= MAX_ENERGY) {
+        triggerBurst();
+      }
     }
   }
 
@@ -1416,7 +1678,7 @@ import * as THREE from 'three';
   window.addEventListener('touchmove', onMove, { passive: false });
   window.addEventListener('touchend', onUp);
 
-  /* ========== 7. АНИМАЦИЯ ========== */
+  /* ========== АНИМАЦИЯ ========== */
   const clock = new THREE.Clock();
   let dotsSize = 0;
   let ballRadiusPx = 0;
@@ -1432,7 +1694,17 @@ import * as THREE from 'three';
     const dt = clock.getDelta();
     const t = clock.getElapsedTime();
 
-    if (autoRotate && !isBroken) {
+    // Затухание энергии
+    if (!isDragging && !isBroken && !freeMode && energyVisible && energy > 0) {
+      energy = Math.max(0, energy - DECAY_RATE);
+      updateEnergyDisplay();
+    }
+
+    if (freeMode) {
+      // Свободное случайное вращение
+      sphere.rotation.y += dt * (0.3 + Math.sin(t * 0.3) * 0.15);
+      sphere.rotation.x += dt * (0.1 + Math.cos(t * 0.4) * 0.08);
+    } else if (autoRotate && !isBroken) {
       sphere.rotation.y += dt * 0.42;
       sphere.rotation.x += dt * 0.14;
     } else if (!isDragging && !isBroken) {
@@ -1444,6 +1716,12 @@ import * as THREE from 'three';
         velocityY = 0;
         velocityX = 0;
       }
+    }
+
+    if (isBursting) {
+      const sinceBurst = performance.now() - burstStartTime;
+      const burstProgress = Math.min(1, sinceBurst / 1500);
+      sphere.rotation.y += dt * 3 * (1 - burstProgress);
     }
 
     light1.position.x = Math.cos(t * 0.6) * 3.8;
@@ -1459,7 +1737,17 @@ import * as THREE from 'three';
     const cy = dotsSize / 2;
 
     const nowPlaying = wrapper.classList.contains('playing');
-    const boost = nowPlaying ? 1.5 : 1.0;
+    let boost = nowPlaying ? 1.5 : 1.0;
+
+    let burstBoost = 1;
+    let burstSpread = 1;
+    if (isBursting) {
+      const sinceBurst = performance.now() - burstStartTime;
+      const bp = Math.min(1, sinceBurst / 1400);
+      burstBoost = 1 + (1 - bp) * 3.5;
+      burstSpread = 1 + (1 - bp) * 1.2;
+      if (bp >= 1) isBursting = false;
+    }
 
     for (let i = 0; i < dots.length; i++) {
       const dot = dots[i];
@@ -1479,21 +1767,21 @@ import * as THREE from 'three';
       const dirX = nx / len;
       const dirY = ny / len;
       const edgeFactor = 1 - Math.abs(n.z);
-      const spread = ballRadiusPx * 1.05 + edgeFactor * ballRadiusPx * 1.9;
+      const spread = (ballRadiusPx * 1.05 + edgeFactor * ballRadiusPx * 1.9) * burstSpread;
       const x = cx + dirX * spread;
       const y = cy + dirY * spread;
 
       const facing = Math.max(0, n.z);
-      let opacity = Math.pow(facing, 0.6) * data.intensity * boost * 0.9;
+      let opacity = Math.pow(facing, 0.6) * data.intensity * boost * burstBoost * 0.9;
       if (data.isWarm) opacity *= 1.25;
 
-      const scale = 0.35 + facing * 1.15;
+      const scale = (0.35 + facing * 1.15) * burstBoost;
+
       dot.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%) scale(${scale})`;
       dot.style.opacity = Math.min(1, opacity).toFixed(3);
     }
   }
 
-  /* ========== 8. РАЗМЕР ========== */
   function resize() {
     const size = canvas.clientWidth;
     renderer.setSize(size, size, false);
@@ -1506,7 +1794,7 @@ import * as THREE from 'three';
   resize();
   animate();
 
-  /* ========== 9. МУЗЫКА ========== */
+  /* ========== МУЗЫКА ========== */
   const chorus = document.getElementById('chorusAudio');
   const vinylBtn = document.getElementById('vinylBtn');
   const vinylHint = document.getElementById('vinylHint');
@@ -1549,22 +1837,42 @@ import * as THREE from 'three';
     isPlaying = false;
   });
 
-  /* ========== 10. МОДАЛКА ========== */
+  /* ========== МОДАЛКА И РЕСТАРТ ========== */
   const overlay = document.getElementById('rewardOverlay');
   const closeBtn = document.getElementById('rewardClose');
   const playAgainBtn = document.getElementById('playAgainBtn');
   const shareBtn = document.getElementById('shareBtn');
+  const videoEl = document.getElementById('rewardVideoEl');
 
   function closeModal() {
     overlay.classList.remove('show');
+    // Включаем режим свободного вращения
+    if (isBroken) {
+      freeMode = true;
+      floatingRestart.classList.add('show');
+      energyWrap.classList.remove('visible');
+      energyVisible = false;
+    }
   }
 
   function resetGame() {
     energy = 0;
     isBroken = false;
+    isBursting = false;
+    freeMode = false;
+    energyVisible = false;
+    gameTime = 0;
     updateEnergyDisplay();
     energyLabel.textContent = 'Крути шар';
-    closeModal();
+    energyWrap.classList.remove('full');
+    energyWrap.classList.remove('visible');
+    overlay.classList.remove('show');
+    floatingRestart.classList.remove('show');
+    // Пауза видео и сброс
+    if (videoEl) {
+      videoEl.pause();
+      videoEl.currentTime = 0;
+    }
   }
 
   closeBtn.addEventListener('click', closeModal);
@@ -1572,11 +1880,19 @@ import * as THREE from 'three';
     if (e.target === overlay) closeModal();
   });
   playAgainBtn.addEventListener('click', resetGame);
+  floatingRestart.addEventListener('click', resetGame);
+
+  // После просмотра видео — тоже можно закрыть в свободный режим
+  if (videoEl) {
+    videoEl.addEventListener('ended', () => {
+      // видео закончилось — ничего не делаем, пусть юзер сам закроет
+    });
+  }
 
   shareBtn.addEventListener('click', async () => {
     const shareData = {
       title: 'RADIO TEPLO — Верба',
-      text: 'Я разбил диско-шар на сайте RADIO TEPLO! Попробуй и ты 🎧',
+      text: 'Я взорвал танцпол на сайте RADIO TEPLO! Попробуй и ты 🎧',
       url: window.location.href
     };
     try {
@@ -1592,7 +1908,7 @@ import * as THREE from 'three';
     }
   });
 
-  /* ========== 11. ПОЯВЛЕНИЕ БЛОКОВ ========== */
+  /* ========== ПОЯВЛЕНИЕ БЛОКОВ ========== */
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) entry.target.classList.add('visible');
