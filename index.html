@@ -74,6 +74,8 @@
     color: var(--silver-dim);
     margin-bottom: 30px;
     animation: fadeUp 0.8s ease both;
+    position: relative;
+    z-index: 3;
   }
 
   .artist {
@@ -84,6 +86,8 @@
     color: var(--muted);
     margin-bottom: 20px;
     animation: fadeUp 0.8s ease 0.1s both;
+    position: relative;
+    z-index: 3;
   }
 
   h1 {
@@ -98,7 +102,7 @@
     margin-bottom: 30px;
     animation: fadeUp 0.8s ease 0.2s both;
     position: relative;
-    z-index: 2;
+    z-index: 3;
   }
 
   .tagline {
@@ -109,40 +113,80 @@
     font-weight: 300;
     animation: fadeUp 0.8s ease 0.3s both;
     position: relative;
-    z-index: 2;
+    z-index: 3;
+  }
+
+  /* ---------- ИНТЕРАКТИВНАЯ ЗОНА (ШАР + ПЛАСТИНКА) ---------- */
+  .hero-interactive {
+    display: flex;
+    gap: 60px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 35px;
+    animation: fadeUp 0.8s ease 0.25s both;
+    position: relative;
+    z-index: 3;
   }
 
   /* ---------- 3D ДИСКО-ШАР ---------- */
   .disco-wrapper {
-    position: relative;
-    margin-bottom: 25px;
-    animation: fadeUp 0.8s ease 0.25s both;
-    z-index: 2;
-    user-select: none;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
+  .disco-stage {
+    position: relative;
+    width: 260px;
+    height: 260px;
+  }
+
   #discoCanvas {
+    position: relative;
     width: 260px;
     height: 260px;
     cursor: grab;
     display: block;
-    filter: drop-shadow(0 0 60px rgba(192,192,255,0.4));
-    transition: filter 0.4s ease;
+    z-index: 2;
+    filter: drop-shadow(0 0 60px rgba(192,192,255,0.45));
+    transition: filter 0.5s ease;
   }
 
-  #discoCanvas:active {
-    cursor: grabbing;
-  }
+  #discoCanvas:active { cursor: grabbing; }
 
   .disco-wrapper.playing #discoCanvas {
-    filter: drop-shadow(0 0 100px rgba(192,192,255,0.75)) drop-shadow(0 0 40px rgba(255,255,255,0.4));
+    filter:
+      drop-shadow(0 0 100px rgba(192,192,255,0.9))
+      drop-shadow(0 0 60px rgba(255,255,255,0.6))
+      brightness(1.25);
+  }
+
+  /* Контейнер для бликов, разлетающихся по странице */
+  .disco-lights {
+    position: absolute;
+    inset: -200px;
+    pointer-events: none;
+    z-index: 1;
+    overflow: visible;
+  }
+
+  .light-dot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(220,220,255,0.85) 25%, rgba(200,200,255,0.35) 55%, transparent 80%);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    will-change: transform, opacity;
+    filter: blur(0.5px);
   }
 
   .disco-hint {
-    margin-top: 8px;
+    margin-top: 12px;
     font-size: 12px;
     color: var(--silver-dim);
     letter-spacing: 2px;
@@ -155,6 +199,128 @@
   @keyframes pulse {
     0%, 100% { opacity: 0.5; }
     50% { opacity: 1; }
+  }
+
+  /* ---------- ВИНИЛОВАЯ ПЛАСТИНКА ---------- */
+  .vinyl-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .vinyl {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    position: relative;
+    background:
+      repeating-radial-gradient(circle at center,
+        #1a1a1a 0px, #1a1a1a 2px,
+        #050505 2px, #050505 4px);
+    box-shadow:
+      0 15px 50px rgba(0,0,0,0.6),
+      inset 0 0 40px rgba(255,255,255,0.04),
+      0 0 0 1px rgba(255,255,255,0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .vinyl::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background:
+      conic-gradient(from 0deg,
+        rgba(255,255,255,0.08) 0deg,
+        transparent 40deg,
+        rgba(255,255,255,0.05) 80deg,
+        transparent 160deg,
+        rgba(255,255,255,0.1) 220deg,
+        transparent 300deg);
+    pointer-events: none;
+  }
+
+  .vinyl-label {
+    position: absolute;
+    inset: 32%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c0c0ff, #8888a0 60%, #4a4a6a);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    color: #0a0a0c;
+    font-family: 'Unbounded', sans-serif;
+    text-align: center;
+    padding: 8px;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.3);
+  }
+
+  .vinyl-label::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #0a0a0c;
+    border-radius: 50%;
+  }
+
+  .vinyl-title {
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+
+  .vinyl-artist {
+    font-size: 7px;
+    letter-spacing: 2px;
+    opacity: 0.7;
+    font-weight: 700;
+  }
+
+  .vinyl-wrapper:hover .vinyl {
+    transform: scale(1.05);
+    box-shadow:
+      0 20px 60px rgba(0,0,0,0.7),
+      inset 0 0 40px rgba(255,255,255,0.06),
+      0 0 60px rgba(192,192,255,0.3);
+  }
+
+  .vinyl-wrapper.playing .vinyl {
+    animation: spin 3s linear infinite;
+    box-shadow:
+      0 20px 60px rgba(0,0,0,0.7),
+      0 0 80px rgba(192,192,255,0.5),
+      inset 0 0 40px rgba(255,255,255,0.08);
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .vinyl-hint {
+    margin-top: 18px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .vinyl-wrapper.playing .vinyl-hint {
+    color: #ffffff;
+    text-shadow: 0 0 20px rgba(192,192,255,0.8);
+    animation: none;
+    opacity: 1;
   }
 
   /* ---------- SECTIONS ---------- */
@@ -407,9 +573,8 @@
     flex-wrap: wrap;
     justify-content: center;
     margin-top: 20px;
-    animation: fadeUp 0.8s ease 0.4s both;
     position: relative;
-    z-index: 2;
+    z-index: 3;
   }
 
   /* ---------- RESPONSIVE ---------- */
@@ -418,7 +583,11 @@
     section { padding: 70px 20px; }
     .player-wrap { padding: 25px; }
     .stats { grid-template-columns: 1fr 1fr; }
+    .hero-interactive { gap: 30px; }
+    .disco-stage { width: 200px; height: 200px; }
     #discoCanvas { width: 200px; height: 200px; }
+    .vinyl { width: 160px; height: 160px; }
+    .disco-lights { inset: -150px; }
   }
 </style>
 </head>
@@ -431,9 +600,26 @@
   <h1>Верба</h1>
   <p class="tagline">Ветка, которая расцвела диско-шарами. Песня о том, как весна приходит даже в самые тёмные времена.</p>
 
-  <div class="disco-wrapper" id="discoWrapper">
-    <canvas id="discoCanvas"></canvas>
-    <p class="disco-hint" id="hint">Крути шар · нажми — играет припев</p>
+  <div class="hero-interactive">
+    <!-- Диско-шар -->
+    <div class="disco-wrapper" id="discoWrapper">
+      <div class="disco-stage">
+        <canvas id="discoCanvas"></canvas>
+        <div class="disco-lights" id="discoLights"></div>
+      </div>
+      <p class="disco-hint" id="hint">Крути шар</p>
+    </div>
+
+    <!-- Виниловая пластинка -->
+    <div class="vinyl-wrapper" id="vinylBtn">
+      <div class="vinyl">
+        <div class="vinyl-label">
+          <span class="vinyl-title">ВЕРБА</span>
+          <span class="vinyl-artist">RADIO TEPLO</span>
+        </div>
+      </div>
+      <p class="vinyl-hint" id="vinylHint">Жми и танцуй</p>
+    </div>
   </div>
 
   <audio id="chorusAudio" preload="auto">
@@ -478,7 +664,7 @@
     <div class="about-text reveal">
       <p><strong>RADIO TEPLO</strong> — группа из Санкт-Петербурга. Мы пишем песни о городах, людях и чувствах, которые сложно объяснить словами.</p>
       <p>«Верба» — трек о том, как даже простая ветка может стать диско-шаром, если посмотреть на неё под правильным углом. Мы соединили нежность весеннего пробуждения и энергию танцпола.</p>
-      <p>Покрути диско-шар выше — а короткое нажатие включит припев. Полная версия уже на всех платформах.</p>
+      <p>Покрути диско-шар, а потом нажми на винил — услышишь припев. Полная версия уже на всех платформах.</p>
     </div>
     <div class="stats reveal">
       <div class="stat">
@@ -513,7 +699,7 @@
   <p class="copy">© 2026 RADIO TEPLO. Все права защищены.</p>
 </footer>
 
-<!-- Three.js для 3D-шара -->
+<!-- Three.js -->
 <script type="importmap">
 {
   "imports": {
@@ -525,7 +711,7 @@
 <script type="module">
 import * as THREE from 'three';
 
-  /* ========== 1. ПРОЦЕДУРНАЯ ТЕКСТУРА ДИСКО-ШАРА ========== */
+  /* ========== 1. ТЕКСТУРА ДИСКО-ШАРА (КРУПНАЯ МОЗАИКА) ========== */
   function createDiscoTexture() {
     const size = 2048;
     const canvas = document.createElement('canvas');
@@ -533,11 +719,10 @@ import * as THREE from 'three';
     canvas.height = size;
     const ctx = canvas.getContext('2d');
 
-    // Тёмная основа между плитками
     ctx.fillStyle = '#0a0a0f';
     ctx.fillRect(0, 0, size, size);
 
-    const tiles = 72; // количество плиток по ширине
+    const tiles = 32; // ← КРУПНЕЕ ПЛИТКИ (было 72)
     const tileSize = size / tiles;
 
     for (let y = 0; y < tiles; y++) {
@@ -545,33 +730,38 @@ import * as THREE from 'three';
         const r = Math.random();
         let color;
 
-        if (r < 0.05) {
-          // Яркий белый блик
-          color = `rgba(255,255,255,${0.95})`;
-        } else if (r < 0.15) {
-          // Голубоватый блик
-          const b = 200 + Math.random() * 55;
-          color = `rgba(${180 + Math.random()*40}, ${190 + Math.random()*40}, ${b}, 0.9)`;
-        } else if (r < 0.45) {
-          // Светлое серебро
-          const v = 160 + Math.random() * 70;
-          color = `rgba(${v}, ${v}, ${v + 10}, 0.95)`;
-        } else if (r < 0.75) {
-          // Среднее серебро
-          const v = 90 + Math.random() * 60;
-          color = `rgba(${v}, ${v}, ${v + 8}, 0.95)`;
+        if (r < 0.08) {
+          color = `rgba(255,255,255,0.98)`;
+        } else if (r < 0.20) {
+          const b = 210 + Math.random() * 45;
+          color = `rgba(${190 + Math.random()*50}, ${200 + Math.random()*40}, ${b}, 0.95)`;
+        } else if (r < 0.50) {
+          const v = 170 + Math.random() * 70;
+          color = `rgba(${v}, ${v}, ${v + 12}, 0.97)`;
+        } else if (r < 0.80) {
+          const v = 90 + Math.random() * 70;
+          color = `rgba(${v}, ${v}, ${v + 10}, 0.97)`;
         } else {
-          // Тёмное серебро
-          const v = 30 + Math.random() * 50;
-          color = `rgba(${v}, ${v}, ${v + 6}, 0.95)`;
+          const v = 25 + Math.random() * 55;
+          color = `rgba(${v}, ${v}, ${v + 8}, 0.97)`;
         }
 
         ctx.fillStyle = color;
         ctx.fillRect(
-          x * tileSize + 0.8,
-          y * tileSize + 0.8,
-          tileSize - 1.6,
-          tileSize - 1.6
+          x * tileSize + 1.2,
+          y * tileSize + 1.2,
+          tileSize - 2.4,
+          tileSize - 2.4
+        );
+
+        // Тонкая светлая кромка у каждой плитки
+        ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(
+          x * tileSize + 1.2,
+          y * tileSize + 1.2,
+          tileSize - 2.4,
+          tileSize - 2.4
         );
       }
     }
@@ -582,7 +772,7 @@ import * as THREE from 'three';
     return tex;
   }
 
-  /* ========== 2. ОКРУЖЕНИЕ (для реалистичных отражений) ========== */
+  /* ========== 2. ОКРУЖЕНИЕ ========== */
   function createEnvTexture() {
     const canvas = document.createElement('canvas');
     canvas.width = 1024;
@@ -591,19 +781,19 @@ import * as THREE from 'three';
 
     const grad = ctx.createLinearGradient(0, 0, 0, 512);
     grad.addColorStop(0, '#ffffff');
-    grad.addColorStop(0.4, '#c0c0ff');
-    grad.addColorStop(0.7, '#4a4a6a');
-    grad.addColorStop(1, '#0a0a12');
+    grad.addColorStop(0.35, '#c8c8ff');
+    grad.addColorStop(0.7, '#40405a');
+    grad.addColorStop(1, '#05050a');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 1024, 512);
 
-    // Пятна-источники света на окружении
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 18; i++) {
       const x = Math.random() * 1024;
-      const y = Math.random() * 300;
-      const r = 40 + Math.random() * 80;
+      const y = Math.random() * 320;
+      const r = 40 + Math.random() * 100;
       const rg = ctx.createRadialGradient(x, y, 0, x, y, r);
-      rg.addColorStop(0, 'rgba(255,255,255,0.9)');
+      rg.addColorStop(0, 'rgba(255,255,255,0.95)');
+      rg.addColorStop(0.5, 'rgba(220,220,255,0.4)');
       rg.addColorStop(1, 'rgba(255,255,255,0)');
       ctx.fillStyle = rg;
       ctx.fillRect(x - r, y - r, r * 2, r * 2);
@@ -618,6 +808,7 @@ import * as THREE from 'three';
   /* ========== 3. СЦЕНА ========== */
   const canvas = document.getElementById('discoCanvas');
   const wrapper = document.getElementById('discoWrapper');
+  const lightsContainer = document.getElementById('discoLights');
 
   const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
@@ -626,53 +817,72 @@ import * as THREE from 'three';
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.2;
+  renderer.toneMappingExposure = 1.25;
 
   const scene = new THREE.Scene();
 
   const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
   camera.position.set(0, 0, 4);
 
-  // Окружение для отражений
   const pmrem = new THREE.PMREMGenerator(renderer);
   const envMap = pmrem.fromEquirectangular(createEnvTexture()).texture;
   scene.environment = envMap;
 
-  // Сфера
   const geometry = new THREE.SphereGeometry(1, 96, 96);
   const texture = createDiscoTexture();
   const material = new THREE.MeshStandardMaterial({
     map: texture,
-    metalness: 0.95,
-    roughness: 0.18,
-    envMapIntensity: 1.6
+    metalness: 0.98,
+    roughness: 0.15,
+    envMapIntensity: 1.7
   });
   const sphere = new THREE.Mesh(geometry, material);
   scene.add(sphere);
 
-  // Точечные источники света для «искр»
-  const light1 = new THREE.PointLight(0xffffff, 3, 12);
+  const light1 = new THREE.PointLight(0xffffff, 3.2, 14);
   light1.position.set(3, 3, 4);
   scene.add(light1);
 
-  const light2 = new THREE.PointLight(0xc0c0ff, 2, 12);
+  const light2 = new THREE.PointLight(0xc0c0ff, 2.2, 14);
   light2.position.set(-3, -2, 3);
   scene.add(light2);
 
-  const light3 = new THREE.PointLight(0xffd0a0, 2, 12);
+  const light3 = new THREE.PointLight(0xffd0a0, 2.0, 14);
   light3.position.set(2, -3, 2);
   scene.add(light3);
 
   const ambient = new THREE.AmbientLight(0xffffff, 0.35);
   scene.add(ambient);
 
-  /* ========== 4. УПРАВЛЕНИЕ ВРАЩЕНИЕМ ========== */
+  /* ========== 4. БЛИКИ, РАЗЛЕТАЮЩИЕСЯ ПО СТРАНИЦЕ ========== */
+  const LIGHTS_COUNT = 55;
+  const lightDots = [];
+  const lightNormals = [];
+
+  // Создаём DOM-элементы для бликов
+  for (let i = 0; i < LIGHTS_COUNT; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'light-dot';
+    lightsContainer.appendChild(dot);
+    lightDots.push(dot);
+
+    // Случайная точка на поверхности сферы
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    const n = new THREE.Vector3(
+      Math.sin(phi) * Math.cos(theta),
+      Math.sin(phi) * Math.sin(theta),
+      Math.cos(phi)
+    );
+    lightNormals.push({ normal: n, intensity: 0.4 + Math.random() * 0.6 });
+  }
+
+  /* ========== 5. УПРАВЛЕНИЕ ========== */
   let isDragging = false;
   let prevX = 0, prevY = 0;
-  let totalMove = 0;
-  let dragStartTime = 0;
   let autoRotate = true;
   let velocityX = 0, velocityY = 0;
+  let autoTimer = null;
 
   function getPoint(e) {
     if (e.touches && e.touches.length) {
@@ -687,10 +897,9 @@ import * as THREE from 'three';
     const p = getPoint(e);
     prevX = p.x;
     prevY = p.y;
-    totalMove = 0;
-    dragStartTime = Date.now();
     velocityX = 0;
     velocityY = 0;
+    if (autoTimer) clearTimeout(autoTimer);
   }
 
   function onMove(e) {
@@ -701,10 +910,9 @@ import * as THREE from 'three';
     const dy = p.y - prevY;
     prevX = p.x;
     prevY = p.y;
-    totalMove += Math.abs(dx) + Math.abs(dy);
 
-    velocityY = dx * 0.008;
-    velocityX = dy * 0.008;
+    velocityY = dx * 0.009;
+    velocityX = dy * 0.009;
 
     sphere.rotation.y += velocityY;
     sphere.rotation.x += velocityX;
@@ -713,15 +921,7 @@ import * as THREE from 'three';
   function onUp() {
     if (!isDragging) return;
     isDragging = false;
-
-    // Определяем, был ли это клик (короткое нажатие, без движения)
-    const dt = Date.now() - dragStartTime;
-    if (totalMove < 8 && dt < 350) {
-      toggleMusic();
-    }
-
-    // Возвращаем авто-вращение через 4 секунды
-    setTimeout(() => {
+    autoTimer = setTimeout(() => {
       autoRotate = true;
     }, 4000);
   }
@@ -734,57 +934,107 @@ import * as THREE from 'three';
   window.addEventListener('touchmove', onMove, { passive: false });
   window.addEventListener('touchend', onUp);
 
-  /* ========== 5. ЦИКЛ ОТРИСОВКИ ========== */
+  /* ========== 6. ЦИКЛ ОТРИСОВКИ ========== */
   const clock = new THREE.Clock();
+  let lightsSize = 0;
+  let ballRadiusPx = 0;
+
+  function updateLightsSize() {
+    lightsSize = lightsContainer.clientWidth;
+    ballRadiusPx = canvas.clientWidth / 2;
+  }
+  window.addEventListener('resize', () => setTimeout(updateLightsSize, 50));
 
   function animate() {
     requestAnimationFrame(animate);
-
     const dt = clock.getDelta();
+    const t = clock.getElapsedTime();
 
     if (autoRotate) {
-      sphere.rotation.y += dt * 0.35;
-      sphere.rotation.x += dt * 0.1;
+      sphere.rotation.y += dt * 0.4;
+      sphere.rotation.x += dt * 0.12;
     } else if (!isDragging) {
-      // Инерция после отпускания
       sphere.rotation.y += velocityY;
       sphere.rotation.x += velocityX;
       velocityY *= 0.96;
       velocityX *= 0.96;
-
       if (Math.abs(velocityY) < 0.0001 && Math.abs(velocityX) < 0.0001) {
         velocityY = 0;
         velocityX = 0;
       }
     }
 
-    // Свет медленно летает вокруг — блики двигаются
-    const t = clock.getElapsedTime();
+    // Свет летает
     light1.position.x = Math.cos(t * 0.6) * 3.5;
     light1.position.z = Math.sin(t * 0.6) * 3.5;
     light2.position.x = Math.cos(t * 0.4 + 2) * 3.5;
     light2.position.z = Math.sin(t * 0.4 + 2) * 3.5;
 
     renderer.render(scene, camera);
+
+    // === Обновление бликов на странице ===
+    if (!lightsSize) updateLightsSize();
+    const cx = lightsSize / 2;
+    const cy = lightsSize / 2;
+
+    const nowPlaying = wrapper.classList.contains('playing');
+    const intensityBoost = nowPlaying ? 1.5 : 1.0;
+
+    for (let i = 0; i < lightDots.length; i++) {
+      const dot = lightDots[i];
+      const item = lightNormals[i];
+
+      // Применяем текущий поворот шара к нормали
+      const n = item.normal.clone().applyQuaternion(sphere.quaternion);
+
+      // Проекция нормали на экранную плоскость
+      const nx = n.x;
+      const ny = -n.y;
+      const lenSq = nx * nx + ny * ny;
+
+      if (lenSq < 0.02 || n.z < -0.2) {
+        dot.style.opacity = '0';
+        continue;
+      }
+
+      const len = Math.sqrt(lenSq);
+      const dirX = nx / len;
+      const dirY = ny / len;
+
+      // Насколько "сбоку" находится зеркало: чем ближе к краю, тем дальше летит луч
+      const edgeFactor = 1 - Math.abs(n.z);
+      const spread = ballRadiusPx * 1.05 + edgeFactor * ballRadiusPx * 1.8;
+      const x = cx + dirX * spread;
+      const y = cy + dirY * spread;
+
+      // Насколько "прямо" смотрит зеркало — тем ярче блик
+      const facing = Math.max(0, n.z);
+      const opacity = Math.pow(facing, 0.6) * item.intensity * intensityBoost * 0.9;
+      const scale = 0.35 + facing * 1.1;
+
+      dot.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%) scale(${scale})`;
+      dot.style.opacity = opacity.toFixed(3);
+    }
   }
 
-  /* ========== 6. АДАПТАЦИЯ РАЗМЕРА ========== */
+  /* ========== 7. РАЗМЕР ========== */
   function resize() {
     const size = canvas.clientWidth;
     renderer.setSize(size, size, false);
     camera.aspect = 1;
     camera.updateProjectionMatrix();
+    updateLightsSize();
   }
-
   window.addEventListener('resize', resize);
-  setTimeout(resize, 50);
+  setTimeout(() => { resize(); }, 50);
   resize();
-
   animate();
 
-  /* ========== 7. МУЗЫКА ========== */
+  /* ========== 8. МУЗЫКА (ВИНИЛ) ========== */
   const chorus = document.getElementById('chorusAudio');
   const hint = document.getElementById('hint');
+  const vinylBtn = document.getElementById('vinylBtn');
+  const vinylHint = document.getElementById('vinylHint');
   let isPlaying = false;
 
   chorus.addEventListener('error', () => {
@@ -792,12 +1042,14 @@ import * as THREE from 'three';
     hint.style.color = '#ff6b6b';
   });
 
-  function toggleMusic() {
+  vinylBtn.addEventListener('click', () => {
     if (isPlaying) {
       chorus.pause();
       chorus.currentTime = 0;
       wrapper.classList.remove('playing');
-      hint.textContent = 'Крути шар · нажми — играет припев';
+      vinylBtn.classList.remove('playing');
+      vinylHint.textContent = 'Жми и танцуй';
+      hint.textContent = 'Крути шар';
       hint.style.color = '';
       isPlaying = false;
       return;
@@ -808,8 +1060,10 @@ import * as THREE from 'three';
     if (p !== undefined) {
       p.then(() => {
         wrapper.classList.add('playing');
-        hint.textContent = '♪ Играет припев... (нажми, чтобы остановить)';
-        hint.style.color = '';
+        vinylBtn.classList.add('playing');
+        vinylHint.textContent = '♪ Играет припев';
+        hint.textContent = '♪ Танцуй!';
+        hint.style.color = '#c0c0ff';
         isPlaying = true;
       }).catch(err => {
         console.error(err);
@@ -817,16 +1071,18 @@ import * as THREE from 'three';
         hint.style.color = '#ff6b6b';
       });
     }
-  }
+  });
 
   chorus.addEventListener('ended', () => {
     wrapper.classList.remove('playing');
-    hint.textContent = 'Крути шар · нажми — играет припев';
+    vinylBtn.classList.remove('playing');
+    vinylHint.textContent = 'Жми и танцуй';
+    hint.textContent = 'Крути шар';
     hint.style.color = '';
     isPlaying = false;
   });
 
-  /* ========== 8. ПОЯВЛЕНИЕ БЛОКОВ ПРИ СКРОЛЛЕ ========== */
+  /* ========== 9. ПОЯВЛЕНИЕ БЛОКОВ ========== */
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) entry.target.classList.add('visible');
